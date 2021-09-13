@@ -1,5 +1,6 @@
 from flask import Flask
 from faker import Faker
+import csv
 
 app = Flask(__name__)
 
@@ -23,6 +24,20 @@ def get_random_students():
     for i in range(30):
         students.append(fake.name())
     return '</br>'.join(students)
+
+
+@app.route("/avr_data")
+def get_avr_data():
+    heights = list()
+    weights = list()
+    with open("hw.csv", encoding="utf-8") as file:
+        file_reader = csv.DictReader(file, delimiter=',')
+        for row in file_reader:
+            heights.append(float(row[' "Height(Inches)"']))
+            weights.append(float(row[' "Weight(Pounds)"']))
+    avr_height = sum(heights) / len(heights)
+    avr_weight = sum(weights) / len(weights)
+    return f'Средний рост: {str(avr_height)}</br>Средний вес: {str(avr_weight)}'
 
 
 app.run(debug=True)
